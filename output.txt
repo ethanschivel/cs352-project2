@@ -1,0 +1,91 @@
+[
+  {
+    "id": 1337,
+    "qr": 1,
+    "opcode": 0,
+    "aa": 0,
+    "tc": 0,
+    "rd": 1,
+    "ra": 1,
+    "rcode": 0,
+    "qdcount": 1,
+    "ancount": 1,
+    "nscount": 0,
+    "arcount": 0,
+    "answers": [
+      {
+        "type": 1,
+        "ip": "128.6.13.2",
+        "ttl": 3600
+      }
+    ]
+  },
+  {
+    "id": 1337,
+    "qr": 1,
+    "opcode": 0,
+    "aa": 0,
+    "tc": 0,
+    "rd": 1,
+    "ra": 1,
+    "rcode": 0,
+    "qdcount": 1,
+    "ancount": 1,
+    "nscount": 0,
+    "arcount": 0,
+    "answers": [
+      {
+        "type": 1,
+        "ip": "171.64.75.72",
+        "ttl": 1800
+      }
+    ]
+  },
+  {
+    "id": 1337,
+    "qr": 1,
+    "opcode": 0,
+    "aa": 0,
+    "tc": 0,
+    "rd": 1,
+    "ra": 1,
+    "rcode": 0,
+    "qdcount": 1,
+    "ancount": 1,
+    "nscount": 0,
+    "arcount": 0,
+    "answers": [
+      {
+        "type": 28,
+        "ip": "2607:f8b0:4006:816::200e",
+        "ttl": 98
+      }
+    ]
+  },
+  {
+    "id": 1337,
+    "qr": 1,
+    "opcode": 0,
+    "aa": 0,
+    "tc": 0,
+    "rd": 1,
+    "ra": 1,
+    "rcode": 0,
+    "qdcount": 1,
+    "ancount": 3,
+    "nscount": 0,
+    "arcount": 0,
+    "answers": [
+      {
+        "type": 1,
+        "ip": "104.18.5.101",
+        "ttl": 300
+      },
+      {
+        "type": 1,
+        "ip": "104.18.4.101",
+        "ttl": 300
+      }
+    ]
+  }
+]

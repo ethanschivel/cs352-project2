@@ -1,0 +1,20 @@
+{
+  "questions": [
+    {
+      "qname": "ilab1.cs.rutgers.edu",
+      "qtype": 1
+    },
+    {
+      "qname": "whale.stanford.edu",
+      "qtype": 1
+    },
+    {
+      "qname": "google.com",
+      "qtype": 28
+    },
+    {
+      "qname": "www.princeton.edu",
+      "qtype": 1
+    }
+  ]
+}
