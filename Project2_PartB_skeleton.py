@@ -76,13 +76,13 @@ def parse_name(data, offset):
 
 def parse_rr(data, offset):
     """Parse a single resource record and return record + new offset."""
-    name, offset = parse_name(data, offset)
+    hostname, offset = parse_name(data, offset)
     atype, aclass, ttl, rdlength = struct.unpack("!HHIH", data[offset:offset+10])
     offset += 10
     rdata = data[offset:offset+rdlength]
     offset += rdlength
     record={}
-    record["hostname"] = name
+    record["hostname"] = hostname
     record["ttl"] = ttl
     record["atype"] = atype
     record["rtype"] = {1: "A", 2: "NS", 5: "CNAME", 28: "AAAA"}.get(atype, str(atype))
@@ -131,20 +131,18 @@ def parse_response(data):
         answers.append(rr)
     response["answers"] = answers
 
-        # Parse Authority RRs
+    # Parse Authority RRs
     authorities = []
     for _ in range(NSCOUNT):
         rr, offset = parse_rr(data, offset)
         authorities.append(rr)
+    response["authorities"] = authorities
 
     # Parse Additional RRs
     additionals = []
     for _ in range(ARCOUNT):
         rr, offset = parse_rr(data, offset)
         additionals.append(rr)
-
-    response["answers"] = answers
-    response["authorities"] = authorities
     response["additionals"] = additionals
 
     return response
@@ -158,9 +156,9 @@ def dns_query(query_spec, server=("8.8.8.8", 53)):
     sock.close()
     response = parse_response(data)
     if response["tc"] == 1:
-        raise RuntimeError("Response is truncated (TC=1)")
+        raise RuntimeError("Response is truncated")
     if response["ra"] == 0:
-        raise RuntimeError("Server does not support recursion (RA=0)")
+        raise RuntimeError("Server does not support recursion")
     return response
 
 if __name__ == "__main__":
