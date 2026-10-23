@@ -2,10 +2,12 @@ import socket
 import struct
 import random
 import json
+import sys
+from urllib import parse
 
 # Example query spec as JSON
 dns_query_spec = {
-    "id": random.randint(0, 65535),
+    "id": 1337,
     "qr": 0,      # query
     "opcode": 0,  # standard query
     "rd": 1,      # recursion desired
@@ -80,10 +82,19 @@ def parse_rr(data, offset):
     rdata = data[offset:offset+rdlength]
     offset += rdlength
     record={}
-    ##########
-    ##  Your code here to create a record given data 
-    ## record fields shoud include  hostname, ttl, atype, rtype, ip, nsname
-    #################
+    record["hostname"] = name
+    record["ttl"] = ttl
+    record["atype"] = atype
+    record["rtype"] = {1: "A", 2: "NS", 5: "CNAME", 28: "AAAA"}.get(atype, str(atype))
+    record["ip"] = None
+    record["nsname"] = None
+    if atype == 1:
+        record["ip"] = socket.inet_ntoa(rdata)
+    elif atype == 28:
+        record["ip"] = socket.inet_ntop(socket.AF_INET6, rdata)
+    elif atype == 2:
+        record["nsname"], _ = parse_name(data, offset - rdlength)
+        #parse from the full data where rdata starts
 
     return record,offset
 
@@ -118,15 +129,25 @@ def parse_response(data):
     for _ in range(ANCOUNT):
         rr, offset = parse_rr(data, offset)
         answers.append(rr)
+    response["answers"] = answers
 
-    
+        # Parse Authority RRs
+    authorities = []
+    for _ in range(NSCOUNT):
+        rr, offset = parse_rr(data, offset)
+        authorities.append(rr)
+
+    # Parse Additional RRs
+    additionals = []
+    for _ in range(ARCOUNT):
+        rr, offset = parse_rr(data, offset)
+        additionals.append(rr)
 
     response["answers"] = answers
-    
+    response["authorities"] = authorities
+    response["additionals"] = additionals
 
     return response
-
-
 
 def dns_query(query_spec, server=("8.8.8.8", 53)):
     query = build_query(query_spec)
@@ -135,8 +156,12 @@ def dns_query(query_spec, server=("8.8.8.8", 53)):
     sock.sendto(query, server)
     data, _ = sock.recvfrom(512)
     sock.close()
-    return parse_response(data)
-
+    response = parse_response(data)
+    if response["tc"] == 1:
+        raise RuntimeError("Response is truncated (TC=1)")
+    if response["ra"] == 0:
+        raise RuntimeError("Server does not support recursion (RA=0)")
+    return response
 
 if __name__ == "__main__":
     response = dns_query(dns_query_spec)
